@@ -1,0 +1,15 @@
+username
+password
+eval
+parse
+setTimeout
+setInterval
+innerHTML
+document.write
+JSON.parse
+outerHTML
+location.href
+sessionStorage
+localStorage
+window.name
+window.postMessage()
