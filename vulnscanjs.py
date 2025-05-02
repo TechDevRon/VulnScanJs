@@ -14,6 +14,8 @@ banner = f"""{Back.rgb('160', '32', '240')}
 """
 print(banner)
 urls_list = []
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36'}
+
 
 def initialize(urls_file, wordlist_file):
     wordlist_data = []
@@ -31,7 +33,7 @@ def perform_scan(url, wordlist_data):
     print(f"{Fore.blue}[*]Target:{Style.reset}{Fore.rgb('255', '165', '0')} {url}{Style.reset}\n{Fore.blue}[*]Loading{Style.reset}")
     try:
         print(f"{Fore.blue}[*]Connecting...{Style.reset}")
-        response = requests.get(url)
+        response = requests.get(url, headers=headers)
         print(f"{Fore.blue}[*]Connected/status: {response.status_code}{Style.reset}\n")
     
     except requests.exceptions.RequestException as e:
@@ -42,7 +44,7 @@ def perform_scan(url, wordlist_data):
         return
     
     for word in wordlist_data:
-        matches = re.findall(word, response.text)
+        matches = re.findall(rf'\b{re.escape(word)}\b', response.text)
         
         if matches:
             print(f"{Fore.green}[Found] Keyword '{word}': Found {len(matches)} matches{Style.reset}")
