@@ -1,7 +1,10 @@
 from colored import Fore, Back, Style
+import threading
 import requests
+from requests.exceptions import Timeout
 import argparse
 import re
+import queue
 
 banner = f"""{Back.rgb('160', '32', '240')}
 ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░       ░▒▓███████▓▒░  ░▒▓███████▓▒░ ░▒▓██████▓▒░  ░▒▓██████▓▒░ ░▒▓███████▓▒░        ░▒▓█▓▒░ ░▒▓███████▓▒░ 
@@ -13,9 +16,11 @@ banner = f"""{Back.rgb('160', '32', '240')}
    ░▒▓██▓▒░    ░▒▓██████▓▒░ ░▒▓████████▓▒░░▒▓█▓▒░░▒▓█▓▒░░▒▓███████▓▒░  ░▒▓██████▓▒░ ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░ ░▒▓██████▓▒░ ░▒▓███████▓▒░{Style.reset}
 """
 print(banner)
+
 urls_list = []
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36'}
 
+output_queue = queue.Queue()
 
 def initialize(urls_file, wordlist_file):
     wordlist_data = []
@@ -29,37 +34,68 @@ def initialize(urls_file, wordlist_file):
             urls_list.append(url.strip())
     return wordlist_data
 
-def perform_scan(url, wordlist_data):
-    print(f"{Fore.blue}[*]Target:{Style.reset}{Fore.rgb('255', '165', '0')} {url}{Style.reset}\n{Fore.blue}[*]Loading{Style.reset}")
+def perform_scan(url, wordlist_data, timeout):
+    output = [] 
+    
+    output.append(f"\n\n{Fore.blue}[*]Target:{Style.reset}{Fore.rgb('255', '165', '0')} {url}{Style.reset}")
+    output.append(f"{Fore.blue}[*]Loading{Style.reset}")
+    
     try:
-        print(f"{Fore.blue}[*]Connecting...{Style.reset}")
-        response = requests.get(url, headers=headers)
-        print(f"{Fore.blue}[*]Connected/status: {response.status_code}{Style.reset}\n")
+        output.append(f"{Fore.blue}[*]Connecting...{Style.reset}")
+        response = requests.get(url, headers=headers, timeout=timeout)
+        output.append(f"{Fore.blue}[*]Connected/status: {response.status_code}{Style.reset}\n")
     
     except requests.exceptions.RequestException as e:
-        raise SystemExit(e)
+        output.append(f"{Fore.red}Error: {e}{Style.reset}")
+        output_queue.put('\n'.join(output)) 
+        return
+
+    except KeyboardInterrupt as k:
+        print("{Fore.red}Error: {e}")
+        print(f"Keyboard Interruption Exiting.....{Style.reset}")
+        return
 
     if not wordlist_data:
-        print(f"{Fore.red}Wordlist empty.{Style.reset}")
+        output.append(f"{Fore.red}Wordlist empty.{Style.reset}")
+        output_queue.put('\n'.join(output))  
         return
     
     for word in wordlist_data:
         matches = re.findall(rf'\b{re.escape(word)}\b', response.text)
         
         if matches:
-            print(f"{Fore.green}[Found] Keyword '{word}': Found {len(matches)} matches{Style.reset}")
+            output.append(f"{Fore.green}[Found] Keyword '{word}': Found {len(matches)} matches{Style.reset}")
     
-    print("\n")
+    output.append("\n")
     response.close()
+    
+    output_queue.put('\n'.join(output))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Js Scanner")
     parser.add_argument('-u', '--urls', type=str, help='File containing urls.')
     parser.add_argument('-w', '--wordlist', type=str, default='default/defaultWordlist', help='File of js functions to look for ex: eval. each word on different line.')
+    parser.add_argument('-t', '--timeout', type=int, default='15', help='Request time out length.')
 
+    threads = []
     arguments = parser.parse_args()
     wordlist = initialize(arguments.urls, arguments.wordlist)
+
+    print(f"{Fore.blue}[*]Starting...") 
+    print(f"[*]Adding threads...")
+    for url in urls_list:
+        thread = threading.Thread(target=perform_scan, args=(url, wordlist,  arguments.timeout))
+        threads.append(thread)
     
-    for index, url in enumerate(urls_list):
-        print(f"{Fore.blue}Scanning URL {index+1}/{len(urls_list)}: {url}{Style.reset}")
-        perform_scan(url, wordlist)
+    print("[*]Starting threads...")
+    print("[*]Connecting to sites, and scanning js, please be patience...")
+    for thread in threads:
+        thread.start()
+    
+    print(f"[*]Joining threads...{Style.reset}\n\n")
+    for thread in threads:
+        thread.join()  
+
+    while not output_queue.empty():
+        print(output_queue.get())
+
