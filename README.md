@@ -1,0 +1,1 @@
+VulnScanJs is a simple tool that scans js code on a target website for vulnerable functions like eval, location.href, parse, etc You can also add your own wordlist of funtions, and make an file of urls you want to scan.
