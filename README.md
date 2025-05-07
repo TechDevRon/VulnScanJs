@@ -1,1 +1,94 @@
-VulnScanJs is a simple tool that scans js code on a target website for vulnerable functions like eval, location.href, parse, etc You can also add your own wordlist of funtions, and make an file of urls you want to scan.
+# 🕵️‍♂️ VulnScanJs
+
+**VulnScanJs** is a lightweight, multithreaded scanner for identifying potentially vulnerable JavaScript patterns in JS files from remote URLs. It’s designed for security researchers, bug bounty hunters, and developers who want to audit front-end code for risky functions.
+
+---
+
+## 🚀 Features
+
+- ⚡ Multithreaded scanning for fast performance  
+- 📜 Customizable wordlist to detect risky JavaScript function calls  
+- 🌐 URL-based scanning  
+- ⏱️ Configurable request timeout  
+- 🎨 Colored terminal output for easy reading  
+
+---
+
+## 📦 Installation
+
+```bash
+git clone https://github.com/your-username/VulnScanJs.git
+cd VulnScanJs
+pip install -r requirements.txt
+```
+
+**Dependencies:**
+- `requests`
+- `colored`
+
+---
+
+## 🛠️ Usage
+
+```bash
+python vulnscanjs.py -u urls.txt -w wordlist.txt -t 15
+```
+
+### Command-line Arguments
+
+| Argument             | Description                                         |
+|----------------------|-----------------------------------------------------|
+| `-u, --urls`         | File path to a list of URLs (one per line)          |
+| `-w, --wordlist`     | Wordlist of JavaScript patterns to scan for         |
+| `-t, --timeout`      | Timeout for HTTP requests (default: 15 seconds)     |
+
+---
+
+## 📂 Example
+
+**urls.txt**
+```
+https://example.com/js/main.js
+https://anotherdomain.com/app.js
+```
+
+**wordlist.txt**
+```
+eval
+document.write
+innerHTML
+```
+
+**Run the scanner:**
+
+```bash
+python vulnscanjs.py -u urls.txt -w wordlist.txt
+```
+
+**Sample output:**
+
+```
+[*] Target: https://example.com/js/main.js
+[*] Status: 200 OK
+[+] Match found for 'eval': 3 times
+[+] Match found for 'document.write': 1 time
+```
+
+---
+
+## 🛡️ Disclaimer
+
+This tool is intended **for educational and ethical security research purposes only**.  
+Do not use VulnScanJs on systems without explicit permission.
+
+---
+
+## 📃 License
+
+[MIT License](LICENSE)
+
+---
+
+## 👨‍💻 Author
+
+Created by [TechDevRon](https://github.com/TechDevRon)
