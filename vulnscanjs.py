@@ -34,7 +34,7 @@ def initialize(urls_file, wordlist_file):
             urls_list.append(url.strip())
     return wordlist_data
 
-def perform_scan(url, wordlist_data, timeout):
+def perform_scan(url, wordlist_data, timeout, defaultmatching):
     output = [] 
     
     output.append(f"\n\n{Fore.blue}[*]Target:{Style.reset}{Fore.rgb('255', '165', '0')} {url}{Style.reset}")
@@ -59,15 +59,26 @@ def perform_scan(url, wordlist_data, timeout):
         output.append(f"{Fore.red}Wordlist empty.{Style.reset}")
         output_queue.put('\n'.join(output))  
         return
-    
-    for word in wordlist_data:
-        matches = re.findall(rf'\b{re.escape(word)}\b', response.text)
-        
-        if matches:
-            output.append(f"{Fore.green}[Found] Keyword '{word}': Found {len(matches)} matches{Style.reset}")
-    
-    output.append("\n")
-    response.close()
+    if defaultmatching  == True:
+
+        for word in wordlist_data:
+
+            matches = re.findall(rf'\b{re.escape(word)}\b', response.text)
+            if matches:
+                output.append(f"{Fore.green}[Found] Keyword '{word}': Found {len(matches)} matches{Style.reset}")
+
+    elif defaultmatching == False:
+
+        for word in wordlist_data:
+
+            rword = re.compile(word.strip())
+            matches = re.findall(rword, response.text)
+
+            if matches:
+                output.append(f"{Fore.green}[Found] Keyword '{word}': Found {len(matches)} matches{Style.reset}")
+
+        output.append("\n")
+        response.close()
     
     output_queue.put('\n'.join(output))
 
@@ -76,6 +87,7 @@ if __name__ == "__main__":
     parser.add_argument('-u', '--urls', type=str, help='File containing urls.')
     parser.add_argument('-w', '--wordlist', type=str, default='default/defaultWordlist', help='File of js functions to look for ex: eval. each word on different line.')
     parser.add_argument('-t', '--timeout', type=int, default='15', help='Request time out length.')
+    parser.add_argument('-m', '--matching', default=False, action='store_true',help='This opinion enables defualt matching meaning no regex in file, note you could put regex in the word list file and it will compile if opinion isn\'t used.')
 
     threads = []
     arguments = parser.parse_args()
@@ -84,7 +96,7 @@ if __name__ == "__main__":
     print(f"{Fore.blue}[*]Starting...") 
     print(f"[*]Adding threads...")
     for url in urls_list:
-        thread = threading.Thread(target=perform_scan, args=(url, wordlist,  arguments.timeout))
+        thread = threading.Thread(target=perform_scan, args=(url, wordlist, arguments.timeout, arguments.matching))
         threads.append(thread)
     
     print("[*]Starting threads...")
@@ -98,4 +110,3 @@ if __name__ == "__main__":
 
     while not output_queue.empty():
         print(output_queue.get())
-
