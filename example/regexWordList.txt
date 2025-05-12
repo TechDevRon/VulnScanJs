@@ -1,0 +1,5 @@
+passwor[a-z]
+Sca[n]{2}er
+ev[e,i]l
+user[a-z]me
+[a=z]{0,}
