@@ -62,7 +62,8 @@ innerHTML
 **Run the scanner:**
 
 ```bash
-python vulnscanjs.py -u urls.txt -w wordlist.txt
+python3 vulnscanjs.py -u urls.txt -w wordlist.txt
+cat wordlist.txt | python3  vulnscanjs.py -u urls.txt
 ```
 
 **Sample output:**
