@@ -37,7 +37,7 @@ def initialize(urls_file, wordlist_file):
         else:
 
             for line in sys.stdin:
-                wordlist_data.append(line.strip().encode('utf-8'))
+                wordlist_data.append(line.strip())
 
     except Exception as e:
 
