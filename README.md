@@ -42,7 +42,7 @@ cat wordlist.txt | python3  vulnscanjs.py
 | `-u, --urls`         | File path to a list of URLs (one per line)          |
 | `-w, --wordlist`     | Wordlist of JavaScript patterns to scan for         |
 | `-t, --timeout`      | Timeout for HTTP requests (default: 15 seconds)     |
-| `-m, --matching`     | Turns on regex compiling for wordlist file          |
+| `-m, --matching`     | Matches regex patterns against the wordlist         |
 ---
 
 ## 📂 Example
