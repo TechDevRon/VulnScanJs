@@ -17,9 +17,9 @@
 ## 📦 Installation
 
 ```bash
-git clone https://github.com/your-username/VulnScanJs.git
-cd VulnScanJs
-pip3 install -r requirements.txt
+$git clone https://github.com/your-username/VulnScanJs.git
+$cd VulnScanJs
+$pip3 install -r requirements.txt
 ```
 
 **Dependencies:**
@@ -31,8 +31,9 @@ pip3 install -r requirements.txt
 ## 🛠️ Usage
 
 ```bash
-python vulnscanjs.py -w wordlist.txt 
-cat wordlist.txt | python3  vulnscanjs.py 
+$python vulnscanjs.py -w wordlist.txt
+or
+$cat wordlist.txt | python3  vulnscanjs.py 
 ```
 
 ### Command-line Arguments
