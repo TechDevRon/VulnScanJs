@@ -19,7 +19,7 @@
 ```bash
 git clone https://github.com/your-username/VulnScanJs.git
 cd VulnScanJs
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 **Dependencies:**
