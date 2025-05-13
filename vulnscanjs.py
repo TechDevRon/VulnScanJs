@@ -109,7 +109,7 @@ def perform_scan(url, wordlist_data, timeout, defaultmatching):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser("Js Scanner")
-    parser.add_argument('-u', '--urls', type=str, help='File containing urls.')
+    parser.add_argument('-u', '--urls', type=str, default='default/DefaultUrls', help='File containing urls.')
     parser.add_argument('-w', '--wordlist', type=str, default='default/defaultWordlist', help='File of js functions to look for ex: eval. each word on different line.')
     parser.add_argument('-t', '--timeout', type=int, default='15', help='Request time out length.')
     parser.add_argument('-m', '--matching', default=False, action='store_true',help='This opinion enables defualt matching meaning no regex in file, note you could put regex in the word list file and it will compile if opinion isn\'t used.')
