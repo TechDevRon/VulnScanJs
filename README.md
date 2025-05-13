@@ -31,7 +31,8 @@ pip install -r requirements.txt
 ## 🛠️ Usage
 
 ```bash
-python vulnscanjs.py -u urls.txt -w wordlist.txt -t 15
+python vulnscanjs.py -w wordlist.txt 
+cat wordlist.txt | python3  vulnscanjs.py 
 ```
 
 ### Command-line Arguments
@@ -63,7 +64,7 @@ innerHTML
 
 ```bash
 python3 vulnscanjs.py -u urls.txt -w wordlist.txt
-cat wordlist.txt | python3  vulnscanjs.py -u urls.txt
+cat wordlist.txt | python3  vulnscanjs.py 
 ```
 
 **Sample output:**
